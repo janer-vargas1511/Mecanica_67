@@ -359,7 +359,7 @@ checkoutButton.addEventListener(
 
 
         const whatsappURL =
-            `https://api.whatsapp.com/send?phone=573106629962&text=${message}`;
+            `https://api.whatsapp.com/send?phone=573017106808&text=${message}`;
 
 
         window.open(
