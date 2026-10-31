@@ -1,7 +1,11 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./original.css";
 import "./App.css";
+import Login from "./components/Login";
+import apiRequest from "./services/api";
+import AdminDashboard from "./components/AdminDashboard";
+import Chatbot from "./components/Chatbot";
+
 
 const categories = [
   {
@@ -30,19 +34,6 @@ const categories = [
   },
 ];
 
-const products = [
-  { name: "Discos de Freno Carbón", category: "frenos", label: "Frenos", description: "Máxima disipación de calor para frenado intenso.", price: 450000, image: "Discos.jpg", featured: true },
-  { name: "Pastillas de Freno", category: "frenos", label: "Frenos", description: "Frenado seguro y eficiente para tu vehículo.", price: 180000, image: "pastillas.jpg" },
-  { name: "Kit de Embrague", category: "motores", label: "Motor", description: "Componentes para una transmisión eficiente.", price: 850000, image: "Kit.jpg" },
-  { name: "Terminales de Dirección", category: "suspension", label: "Suspensión", description: "Estabilidad y precisión en la dirección.", price: 125000, image: "Terminal.jpg" },
-  { name: "Batería Pro-Performance", category: "iluminacion", label: "Eléctrico", description: "Energía confiable para el sistema eléctrico.", price: 380000, image: "bateria_ODYSSEY.jpg" },
-  { name: "Amortiguador Reforzado", category: "suspension", label: "Suspensión", description: "Mayor estabilidad y comodidad en carretera.", price: 520000, image: "amortiguador.jpg" },
-  { name: "Bomba de Agua Alto Flujo", category: "motores", label: "Motor", description: "Circulación eficiente del refrigerante.", price: 310000, image: "Bomba.jpg" },
-  { name: "Kit Aceite Sintético", category: "motores", label: "Motor", description: "Protección y rendimiento para tu motor.", price: 210000, image: "Kit_aceite.jpg" },
-  { name: "Bujía de Iridio Laser", category: "motores", label: "Motor", description: "Encendido preciso y eficiente.", price: 95000, image: "bujia.jpg" },
-  { name: "Alternador Inteligente", category: "iluminacion", label: "Eléctrico", description: "Carga confiable para el sistema eléctrico.", price: 740000, image: "alternador.jpg" },
-  { name: "Iluminación LED Headlight", category: "iluminacion", label: "Eléctrico", description: "Iluminación de alto rendimiento.", price: 600000, image: "iluminacion.jpg" },
-];
 
 const services = [
   {
@@ -127,6 +118,87 @@ function App() {
   const [activeQuestion, setActiveQuestion] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [toast, setToast] = useState("");
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [productsError, setProductsError] = useState("");
+  const [sessionLoading, setSessionLoading] = useState(true);
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const [contactSending, setContactSending] = useState(false);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("mec67_token");
+
+    if (!token) {
+      setSessionLoading(false);
+      return;
+    }
+
+    let active = true;
+
+    apiRequest("/auth/me")
+      .then((data) => {
+        if (active) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {
+        sessionStorage.removeItem("mec67_token");
+        if (active) {
+          setCurrentUser(null);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setSessionLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadProducts() {
+      try {
+        setProductsLoading(true);
+        setProductsError("");
+
+        const data = await apiRequest("/products");
+
+        if (active) {
+          setProducts(data.products || []);
+        }
+      } catch (error) {
+        if (active) {
+          setProductsError(
+            error.message || "No fue posible cargar los productos."
+          );
+        }
+      } finally {
+        if (active) {
+          setProductsLoading(false);
+        }
+      }
+    }
+
+    loadProducts();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce(
@@ -162,10 +234,49 @@ function App() {
     setCart((current) => current.filter((item) => item.name !== name));
   }
 
+  async function handleContactSubmit(event) {
+    event.preventDefault();
+
+    setContactSending(true);
+
+    try {
+      const data = await apiRequest("/contact", {
+        method: "POST",
+        body: JSON.stringify(contactForm),
+      });
+
+      setToast(data.message || "Mensaje enviado correctamente.");
+
+      setContactForm({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      setToast(error.message || "No se pudo enviar el mensaje.");
+    } finally {
+      setContactSending(false);
+      window.setTimeout(() => setToast(""), 3000);
+    }
+  }
+
+
   function checkout() {
     if (cart.length === 0) {
       setToast("Primero añade productos al carrito.");
       window.setTimeout(() => setToast(""), 2500);
+      return;
+    }
+
+    // Exigir autenticación antes de continuar.
+    if (!currentUser) {
+      setCartOpen(false);
+      setLoginOpen(true);
+
+      setToast("Inicia sesión para continuar con tu pedido.");
+      window.setTimeout(() => setToast(""), 3000);
+
       return;
     }
 
@@ -179,6 +290,8 @@ function App() {
       "",
       ...lines,
       "",
+      `Cliente: ${currentUser.name}`,
+      `Correo: ${currentUser.email}`,
       `Total aproximado: ${money(cartTotal)}`,
     ].join("\n");
 
@@ -188,6 +301,7 @@ function App() {
       "noopener,noreferrer"
     );
   }
+
 
   function selectCategory(category) {
     setActiveCategory(category);
@@ -219,6 +333,36 @@ function App() {
               </a>
             ))}
           </nav>
+
+          {!sessionLoading && !currentUser && (
+            <button
+              className="login-nav-button"
+              onClick={() => setLoginOpen(true)}
+            >
+              Iniciar sesión
+            </button>
+          )}
+
+          {currentUser?.role === "admin" && (
+            <button
+              className="login-nav-button"
+              onClick={() => setAdminOpen(true)}
+            >
+              Panel de administrador
+            </button>
+          )}
+
+          {currentUser && (
+            <button
+              className="login-nav-button"
+              onClick={() => {
+                sessionStorage.removeItem("mec67_token");
+                setCurrentUser(null);
+              }}
+            >
+              Cerrar sesión
+            </button>
+          )}
 
           <div className="nav-actions">
             <button
@@ -322,37 +466,59 @@ function App() {
             </div>
 
             <div className="products-grid">
-              {visibleProducts.map((product) => (
-                <article className="product-card" key={product.name}>
-                  <div className="product-image">
-                    <div className="product-placeholder">
-                      <img
-                        src={`/img/productos/${product.image}`}
-                        alt={product.name}
-                      />
-                    </div>
-                    {product.featured && (
-                      <span className="product-badge">DESTACADO</span>
-                    )}
-                  </div>
+              {productsLoading ? (
+                <p className="products-message">
+                  Cargando productos...
+                </p>
+              ) : productsError ? (
+                <p className="products-message">
+                  {productsError}
+                </p>
+              ) : visibleProducts.length === 0 ? (
+                <p className="products-message">
+                  No hay productos disponibles en esta categoría.
+                </p>
+              ) : (
+                visibleProducts.map((product) => (
+                  <article className="product-card" key={product._id}>
+                    <div className="product-image">
+                      <div className="product-placeholder">
+                        <img
+                          src={`/img/productos/${product.image}`}
+                          alt={product.name}
+                        />
+                      </div>
 
-                  <div className="product-content">
-                    <span className="product-category">{product.label}</span>
-                    <h3>{product.name}</h3>
-                    <p>{product.description}</p>
-
-                    <div className="product-footer">
-                      <strong>{money(product.price)}</strong>
-                      <button
-                        className="add-cart"
-                        onClick={() => addToCart(product)}
-                      >
-                        Añadir
-                      </button>
+                      {product.featured && (
+                        <span className="product-badge">
+                          DESTACADO
+                        </span>
+                      )}
                     </div>
-                  </div>
-                </article>
-              ))}
+
+                    <div className="product-content">
+                      <span className="product-category">
+                        {product.label}
+                      </span>
+
+                      <h3>{product.name}</h3>
+
+                      <p>{product.description}</p>
+
+                      <div className="product-footer">
+                        <strong>{money(product.price)}</strong>
+
+                        <button
+                          className="add-cart"
+                          onClick={() => addToCart(product)}
+                        >
+                          Añadir
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                ))
+              )}
             </div>
           </div>
         </section>
@@ -472,6 +638,84 @@ function App() {
                   <strong>Horario</strong>
                   <p>Lunes - Sábado</p>
                 </div>
+              </div>
+              <div className="contact-form-container">
+                <div className="section-heading">
+                  <span className="section-tag">ESCRÍBENOS</span>
+                  <h2>¿Necesitas ayuda?</h2>
+                  <p>
+                    Envíanos tus consultas y nuestro equipo se pondrá en contacto contigo.
+                  </p>
+                </div>
+
+                <form className="contact-form" onSubmit={handleContactSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="contact-name">Nombre completo</label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      value={contactForm.name}
+                      onChange={(e) =>
+                        setContactForm({ ...contactForm, name: e.target.value })
+                      }
+                      minLength={2}
+                      maxLength={80}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="contact-email">Correo electrónico</label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      value={contactForm.email}
+                      onChange={(e) =>
+                        setContactForm({ ...contactForm, email: e.target.value })
+                      }
+                      maxLength={254}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="contact-subject">Asunto</label>
+                    <input
+                      id="contact-subject"
+                      type="text"
+                      value={contactForm.subject}
+                      onChange={(e) =>
+                        setContactForm({ ...contactForm, subject: e.target.value })
+                      }
+                      minLength={3}
+                      maxLength={120}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="contact-message">Mensaje</label>
+                    <textarea
+                      id="contact-message"
+                      rows="5"
+                      value={contactForm.message}
+                      onChange={(e) =>
+                        setContactForm({ ...contactForm, message: e.target.value })
+                      }
+                      minLength={10}
+                      maxLength={2000}
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={contactSending}
+                  >
+                    {contactSending ? "Enviando..." : "Enviar mensaje"}
+                  </button>
+                </form>
               </div>
             </div>
           </div>
@@ -611,10 +855,24 @@ function App() {
       </aside>
 
       {toast && <div className="toast show">{toast}</div>}
+
+      {loginOpen && (
+        <Login
+          onClose={() => setLoginOpen(false)}
+          onLogin={(user) => setCurrentUser(user)}
+        />
+      )}
+
+      {adminOpen && currentUser?.role === "admin" && (
+        <AdminDashboard
+          onClose={() => setAdminOpen(false)}
+        />
+      )}
+
+      <Chatbot />
+
     </>
   );
 }
 
 export default App;
-
-

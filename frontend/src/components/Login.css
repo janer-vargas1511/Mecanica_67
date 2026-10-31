@@ -1,0 +1,137 @@
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 35px;
+  color: #fff;
+  background: #181818;
+  border: 1px solid #333;
+  border-radius: 10px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+}
+
+.login-close {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.login-tag {
+  color: #e50914;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.login-card h2 {
+  margin: 12px 0 8px;
+  font-size: 28px;
+}
+
+.login-card > p {
+  color: #aaa;
+  margin-bottom: 25px;
+}
+
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-card label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 13px;
+  color: #fff;
+  background: #252525;
+  border: 1px solid #444;
+  border-radius: 5px;
+  outline: none;
+}
+
+.login-card input:focus {
+  border-color: #e50914;
+}
+
+.login-submit {
+  margin-top: 12px;
+  padding: 14px;
+  color: #fff;
+  background: #e50914;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-submit:hover {
+  background: #bd0710;
+}
+
+.login-submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.login-error {
+  padding: 10px;
+  color: #ffb3b3;
+  background: rgba(229, 9, 20, 0.12);
+  border: 1px solid rgba(229, 9, 20, 0.4);
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+.login-switch {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 20px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+.login-switch button {
+  background: transparent;
+  border: none;
+  color: #e50914;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-switch button:hover {
+  text-decoration: underline;
+}
+
+.login-success {
+  padding: 10px;
+  margin-top: 12px;
+  background: rgba(40, 160, 80, 0.12);
+  border: 1px solid #268c4a;
+  border-radius: 5px;
+  color: #65d98a;
+  font-size: 14px;
+}

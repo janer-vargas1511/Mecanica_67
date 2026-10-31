@@ -150,3 +150,83 @@
   text-align: center;
   margin: 0 auto;
 }
+
+
+.login-nav-button {
+  padding: 9px 15px;
+  color: #fff;
+  background: transparent;
+  border: 1px solid #e50914;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.login-nav-button:hover {
+  background: #e50914;
+}
+.contact-form-container {
+  max-width: 750px;
+  margin: 70px auto 0;
+  padding: 35px;
+  background: #181818;
+  border: 1px solid #303030;
+  border-radius: 12px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-form label {
+  color: #f5f5f5;
+  font-weight: 600;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 13px;
+  color: #fff;
+  background: #101010;
+  border: 1px solid #383838;
+  border-radius: 6px;
+  outline: none;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #e50914;
+}
+
+.contact-form textarea {
+  resize: vertical;
+}
+
+.contact-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.contact-form-container .section-heading h2 {
+  color: #ffffff;
+}
+
+.contact-form-container .section-heading p {
+  color: #cccccc;
+}
+.products-message {
+  grid-column: 1 / -1;
+  width: 100%;
+  padding: 30px;
+  text-align: center;
+  color: #ccc;
+  font-size: 15px;
+}
