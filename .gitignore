@@ -3,3 +3,26 @@ img/15680449624728.png
 img/2AZATVG475HLNA27GUXNLHUE6I.png
 img/bugatti-chiron-super-sport-300-4.jpg
 img/images.png
+# Dependencias
+node_modules/
+
+# Variables de entorno y credenciales
+.env
+.env.*
+!.env.example
+
+# Archivos generados
+dist/
+dist-ssr/
+
+# Archivos locales
+*.local
+
+# Logs
+*.log
+
+# Archivos del sistema y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
