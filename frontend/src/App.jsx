@@ -327,46 +327,99 @@ function App() {
               ["Servicios", "#servicios"],
               ["Ofertas", "#ofertas"],
               ["Contacto", "#contacto"],
-            ].map(([label, href]) => (
-              <a key={href} href={href} onClick={() => setMenuOpen(false)}>
-                {label}
-              </a>
-            ))}
+              ].map(([label, href]) => (
+                <a key={href} href={href} onClick={() => setMenuOpen(false)}>
+                  {label}
+                </a>
+              ))}
+
+            {/* Opciones exclusivas del menú móvil */}
+            <div className="mobile-menu-actions">
+              {!sessionLoading && !currentUser && (
+                <button
+                  className="login-nav-button"
+                  onClick={() => {
+                    setLoginOpen(true);
+                    setMenuOpen(false);
+                  }}
+                >
+                  Iniciar sesión
+                </button>
+              )}
+
+              {currentUser?.role === "admin" && (
+                <button
+                  className="login-nav-button"
+                  onClick={() => {
+                    setAdminOpen(true);
+                    setMenuOpen(false);
+                  }}
+                >
+                  Panel de administrador
+                </button>
+              )}
+
+              {currentUser && (
+                <button
+                  className="login-nav-button"
+                  onClick={() => {
+                    sessionStorage.removeItem("mec67_token");
+                    setCurrentUser(null);
+                    setMenuOpen(false);
+                  }}
+                >
+                  Cerrar sesión
+                </button>
+              )}
+
+              <button
+                className="cart-button mobile-cart-button"
+                onClick={() => {
+                  setCartOpen(true);
+                  setMenuOpen(false);
+                }}
+              >
+                🛒 Mi carrito ({cartCount})
+              </button>
+            </div>
           </nav>
 
-          {!sessionLoading && !currentUser && (
-            <button
-              className="login-nav-button"
-              onClick={() => setLoginOpen(true)}
-            >
-              Iniciar sesión
-            </button>
-          )}
+          {/* Opciones exclusivas de PC */}
+          <div className="desktop-nav-actions">
+            {!sessionLoading && !currentUser && (
+              <button
+                className="login-nav-button"
+                onClick={() => setLoginOpen(true)}
+              >
+                Iniciar sesión
+              </button>
+            )}
 
-          {currentUser?.role === "admin" && (
-            <button
-              className="login-nav-button"
-              onClick={() => setAdminOpen(true)}
-            >
-              Panel de administrador
-            </button>
-          )}
+            {currentUser?.role === "admin" && (
+              <button
+                className="login-nav-button"
+                onClick={() => setAdminOpen(true)}
+              >
+                Panel de administrador
+              </button>
+            )}
 
-          {currentUser && (
-            <button
-              className="login-nav-button"
-              onClick={() => {
-                sessionStorage.removeItem("mec67_token");
-                setCurrentUser(null);
-              }}
-            >
-              Cerrar sesión
-            </button>
-          )}
+            {currentUser && (
+              <button
+                className="login-nav-button"
+                onClick={() => {
+                  sessionStorage.removeItem("mec67_token");
+                  setCurrentUser(null);
+                }}
+              >
+                Cerrar sesión
+              </button>
+            )}
+          </div>
 
           <div className="nav-actions">
             <button
-              className="cart-button"
+              className="cart-button desktop-cart-button"
               onClick={() => setCartOpen(true)}
               aria-label="Abrir carrito"
             >
@@ -382,7 +435,8 @@ function App() {
             </button>
           </div>
         </div>
-      </header>
+      </header >
+
 
       <main>
         <section className="hero">

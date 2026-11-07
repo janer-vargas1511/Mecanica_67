@@ -230,3 +230,37 @@
   color: #ccc;
   font-size: 15px;
 }
+
+/* RESPONSIVE - APP */
+
+@media (max-width: 600px) {
+
+  .cart-panel {
+    width: 100%;
+    max-width: 100%;
+    padding: 18px;
+  }
+
+  .cart-item {
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .cart-item-info {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .contact-form-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+    margin-top: 40px;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    min-width: 0;
+    max-width: 100%;
+  }
+}

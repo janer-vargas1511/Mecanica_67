@@ -372,3 +372,60 @@
     padding: 12px 8px;
   }
 }
+
+
+/* AJUSTES ADICIONALES PARA MÓVILES */
+
+@media (max-width: 600px) {
+
+  .admin-panel {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .admin-contact,
+  .admin-product {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-contact > div,
+  .admin-product > div {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .admin-tabs {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .admin-tabs button {
+    flex: 1 1 120px;
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .admin-product-actions {
+    width: 100%;
+  }
+
+  .admin-product-actions button {
+    flex: 1 1 100px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-product-form {
+    min-width: 0;
+    padding: 15px;
+  }
+
+  .admin-product-form input,
+  .admin-product-form textarea,
+  .admin-product-form select {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
