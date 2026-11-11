@@ -5,6 +5,9 @@ import Login from "./components/Login";
 import apiRequest from "./services/api";
 import AdminDashboard from "./components/AdminDashboard";
 import Chatbot from "./components/Chatbot";
+import NotFound from "./components/NotFound";
+import Terms from "./components/Terms";
+import Privacy from "./components/Privacy";
 
 
 const categories = [
@@ -112,6 +115,13 @@ const money = (value) =>
   }).format(value);
 
 function App() {
+  const currentPath = window.location.pathname;
+
+  const isTermsPage = currentPath === "/terminos-y-condiciones";
+  const isPrivacyPage = currentPath === "/politica-de-privacidad";
+
+  const isNotFound =
+    currentPath !== "/" && !isTermsPage && !isPrivacyPage;
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("todos");
@@ -211,11 +221,55 @@ function App() {
       ? products
       : products.filter((product) => product.category === activeCategory);
 
-  function addToCart(product) {
-    setCart((current) => {
-      const found = current.find((item) => item.name === product.name);
+  function getRemainingStock(product) {
+    // Si no se definió inventario, no hay límite.
+    if (product.stock === null || product.stock === undefined) {
+      return null;
+    }
 
-      if (found) {
+    // Buscar cuántas unidades están en el carrito.
+    const cartItem = cart.find(
+      (item) => item.name === product.name
+    );
+
+    const quantityInCart = cartItem ? cartItem.quantity : 0;
+
+    return Math.max(product.stock - quantityInCart, 0);
+  }
+
+
+  function addToCart(product) {
+    // Comprobar si el producto está agotado.
+    if (product.stock !== null && product.stock !== undefined) {
+      if (product.stock <= 0) {
+        setToast(`${product.name} está agotado.`);
+        window.setTimeout(() => setToast(""), 2500);
+        return;
+      }
+    }
+
+    // Buscar si el producto ya está en el carrito.
+    const found = cart.find((item) => item.name === product.name);
+
+    // Comprobar el límite de existencias.
+    if (
+      product.stock !== null &&
+      product.stock !== undefined &&
+      found &&
+      found.quantity >= product.stock
+    ) {
+      setToast(`Solo hay ${product.stock} unidades disponibles.`);
+      window.setTimeout(() => setToast(""), 3000);
+      return;
+    }
+
+    // Agregar o incrementar el producto.
+    setCart((current) => {
+      const existing = current.find(
+        (item) => item.name === product.name
+      );
+
+      if (existing) {
         return current.map((item) =>
           item.name === product.name
             ? { ...item, quantity: item.quantity + 1 }
@@ -262,7 +316,7 @@ function App() {
   }
 
 
-  function checkout() {
+  async function checkout() {
     if (cart.length === 0) {
       setToast("Primero añade productos al carrito.");
       window.setTimeout(() => setToast(""), 2500);
@@ -277,6 +331,26 @@ function App() {
       setToast("Inicia sesión para continuar con tu pedido.");
       window.setTimeout(() => setToast(""), 3000);
 
+      return;
+    }
+
+    // Validar las existencias actuales en el backend.
+    try {
+      await apiRequest("/products/validate-stock", {
+        method: "POST",
+        body: JSON.stringify({
+          items: cart.map((item) => ({
+            productId: item._id,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+    } catch (error) {
+      setToast(
+        error.message || "No se pudieron verificar las existencias."
+      );
+
+      window.setTimeout(() => setToast(""), 3500);
       return;
     }
 
@@ -300,14 +374,26 @@ function App() {
       "_blank",
       "noopener,noreferrer"
     );
-  }
 
+  }
 
   function selectCategory(category) {
     setActiveCategory(category);
     document.getElementById("productos")?.scrollIntoView({
       behavior: "smooth",
     });
+  }
+
+  if (isPrivacyPage) {
+    return <Privacy />;
+  }
+
+  if (isTermsPage) {
+    return <Terms />;
+  }
+
+  if (isNotFound) {
+    return <NotFound />;
   }
 
   return (
@@ -559,14 +645,25 @@ function App() {
 
                       <p>{product.description}</p>
 
+                      {getRemainingStock(product) !== null && (
+                        <span className="product-stock">
+                          {getRemainingStock(product) > 0
+                            ? `${getRemainingStock(product)} existencias`
+                            : "AGOTADO"}
+                        </span>
+                      )}
+
                       <div className="product-footer">
                         <strong>{money(product.price)}</strong>
 
                         <button
                           className="add-cart"
                           onClick={() => addToCart(product)}
+                          disabled={getRemainingStock(product) === 0}
                         >
-                          Añadir
+                          {getRemainingStock(product) === 0
+                            ? "AGOTADO"
+                            : "Añadir"}
                         </button>
                       </div>
                     </div>
@@ -838,9 +935,9 @@ function App() {
 
           <div className="footer-column">
             <h3>Contacto</h3>
-            <p>Bogotá, Colombia</p>
+            <p>Barranquilla, Colombia</p>
             <p>+57 301 710 6808</p>
-            <p>contacto@mecanicassixseven.com</p>
+            <p>Janer.vargas1511@gmail.com</p>
           </div>
 
           <div className="footer-column">
@@ -857,8 +954,8 @@ function App() {
           <div className="container">
             <p>© 2026 Mecánicas Six-seven. Todos los derechos reservados.</p>
             <div>
-              <a href="#contacto">Política de Privacidad</a>
-              <a href="#contacto">Términos de Servicio</a>
+              <a href="/terminos-y-condiciones">Terminos y Condiciones</a>
+              <a href="/politica-de-privacidad">Politica de Privacidad</a>
             </div>
           </div>
         </div>

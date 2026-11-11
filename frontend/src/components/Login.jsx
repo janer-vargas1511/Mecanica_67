@@ -10,6 +10,7 @@ function Login({ onClose, onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -21,6 +22,7 @@ function Login({ onClose, onLogin }) {
     setSuccess("");
     setPassword("");
     setConfirmPassword("");
+    setAcceptedPrivacy(false);
   }
 
   async function handleSubmit(event) {
@@ -34,6 +36,11 @@ function Login({ onClose, onLogin }) {
         setError("Las contraseñas no coinciden.");
         return;
       }
+
+      if (!acceptedPrivacy) {
+        setError("Debes aceptar la Política de Privacidad para registrarte.");
+        return;
+        }
 
       if (password.length < 10 || password.length > 72) {
         setError("La contraseña debe tener entre 10 y 72 caracteres.");
@@ -173,6 +180,31 @@ function Login({ onClose, onLogin }) {
                 maxLength={72}
                 required
               />
+
+              {mode === "register" && (
+                <label className="privacy-acceptance">
+                  <input
+                    type="checkbox"
+                    checked={acceptedPrivacy}
+                    onChange={(event) =>
+                      setAcceptedPrivacy(event.target.checked)
+                    }
+                    required
+                  />
+
+                  <span>
+                    He leído y acepto la{" "}
+                    <a
+                      href="/politica-de-privacidad"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Política de Privacidad
+                    </a>
+                    .
+                  </span>
+                </label>
+              )}
             </>
           )}
 

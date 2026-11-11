@@ -1,0 +1,225 @@
+
+/* ================================
+   TERMS AND CONDITIONS
+================================ */
+
+.terms-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  padding: 60px 20px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(229, 9, 20, 0.12),
+      transparent 35%
+    ),
+    #0b0b0b;
+  color: #f5f5f5;
+}
+
+/* Main container */
+
+.terms-container {
+  width: 100%;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+/* ================================
+   HEADER
+================================ */
+
+.terms-header {
+  text-align: center;
+  margin-bottom: 45px;
+}
+
+.terms-brand {
+  display: inline-block;
+  color: #e50914;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+}
+
+.terms-header h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  margin-bottom: 15px;
+  line-height: 1.15;
+}
+
+.terms-header > p {
+  max-width: 650px;
+  margin: 0 auto 20px;
+  color: #bdbdbd;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.terms-update {
+  display: inline-block;
+  color: #888;
+  font-size: 0.8rem;
+}
+
+/* ================================
+   NAVIGATION
+================================ */
+
+.terms-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px;
+  margin-bottom: 35px;
+  background: #151515;
+  border: 1px solid #292929;
+  border-radius: 12px;
+}
+
+.terms-navigation a {
+  color: #cfcfcf;
+  text-decoration: none;
+  font-size: 0.85rem;
+  padding: 9px 13px;
+  border-radius: 6px;
+  transition: 0.25s ease;
+}
+
+.terms-navigation a:hover {
+  color: #fff;
+  background: rgba(229, 9, 20, 0.15);
+}
+
+/* ================================
+   SECTIONS
+================================ */
+
+.terms-section {
+  padding: 25px 28px;
+  margin-bottom: 18px;
+  background: #141414;
+  border: 1px solid #252525;
+  border-left: 3px solid #e50914;
+  border-radius: 9px;
+  scroll-margin-top: 25px;
+}
+
+.terms-section h2 {
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.terms-section p {
+  color: #bdbdbd;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 13px;
+}
+
+.terms-section p:last-child {
+  margin-bottom: 0;
+}
+
+.terms-section ul {
+  padding-left: 22px;
+  margin: 12px 0;
+}
+
+.terms-section li {
+  color: #bdbdbd;
+  font-size: 0.93rem;
+  line-height: 1.8;
+  padding-left: 5px;
+  margin-bottom: 7px;
+}
+
+.terms-section li::marker {
+  color: #e50914;
+}
+
+/* ================================
+   FOOTER
+================================ */
+
+.terms-footer {
+  text-align: center;
+  padding: 35px 15px 10px;
+  margin-top: 25px;
+  border-top: 1px solid #292929;
+}
+
+.terms-footer a {
+  display: inline-block;
+  color: #fff;
+  background: #e50914;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 6px;
+  transition: 0.25s ease;
+}
+
+.terms-footer a:hover {
+  background: #b80710;
+  transform: translateY(-2px);
+}
+
+.terms-footer p {
+  color: #777;
+  font-size: 0.8rem;
+  margin-top: 22px;
+}
+
+/* ================================
+   RESPONSIVE DESIGN
+================================ */
+
+@media (max-width: 600px) {
+  .terms-page {
+    padding: 40px 14px;
+  }
+
+  .terms-header {
+    margin-bottom: 30px;
+  }
+
+  .terms-brand {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+  }
+
+  .terms-navigation {
+    gap: 7px;
+    padding: 13px 9px;
+  }
+
+  .terms-navigation a {
+    font-size: 0.78rem;
+    padding: 8px 10px;
+  }
+
+  .terms-section {
+    padding: 21px 18px;
+    margin-bottom: 14px;
+  }
+
+  .terms-section h2 {
+    font-size: 1.05rem;
+  }
+
+  .terms-section p,
+  .terms-section li {
+    font-size: 0.88rem;
+  }
+
+  .terms-footer {
+    padding-top: 28px;
+  }
+}

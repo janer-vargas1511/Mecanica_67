@@ -135,3 +135,35 @@
   color: #65d98a;
   font-size: 14px;
 }
+/* Aceptación de la Política de Privacidad */
+
+.login-card .privacy-acceptance {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 8px;
+  color: #bbb;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1.5;
+}
+
+.login-card .privacy-acceptance input {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  padding: 0;
+  accent-color: #e50914;
+  cursor: pointer;
+}
+
+.privacy-acceptance a {
+  color: #e50914;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.privacy-acceptance a:hover {
+  text-decoration: underline;
+}
